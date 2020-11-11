@@ -5,11 +5,11 @@
  * Plugin URI: https://wordpress.org/plugins/instagram-media-scraper/
  * Description: Scrape Media from a specified Instagram account.
  * Version: 1.0.0
- * Requires at least: 5.5
- * Requires PHP: 7.2
+ * Requires at least: 5.0
+ * Requires PHP: 7.0
  * Author: LSVH
  * Author URI: https://lsvh.org/
- * License: GNU
+ * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
  * Text Domain: ig-media-scraper
  * Domain Path: /languages
