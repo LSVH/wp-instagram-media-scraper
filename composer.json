@@ -1,0 +1,22 @@
+{
+    "name": "lsvh/wp-instagram-media-scraper",
+    "description": "Scrape Media from a specified Instagram account.",
+    "type": "project",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Luuk S. van Houdt",
+            "email": "info@lsvh.org"
+        }
+    ],
+    "require": {
+        "ext-json": "*",
+        "raiym/instagram-php-scraper": "^0.10.0",
+        "guzzlehttp/guzzle": "^7.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "LSVH\\WordPress\\Plugin\\InstagramMediaScraper\\": "lib/"
+        }
+    }
+}
