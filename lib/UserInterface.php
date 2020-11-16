@@ -1,6 +1,6 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\InstagramMediaScraper;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
 class UserInterface
 {
@@ -24,7 +24,7 @@ class UserInterface
     private function renderTitle()
     {
         $title = $this->app->getTitle();
-        return "<h1>$title</h1>";
+        return "<h1>$title</h1><hr />";
     }
 
     private function renderForm()

@@ -1,6 +1,6 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\InstagramMediaScraper;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
 class Bootstrap
 {
@@ -57,7 +57,7 @@ class Bootstrap
 
     private function getMenuTitle()
     {
-        $title = preg_replace('/instagram\s+/i', '', $this->app->getTitle());
-        return '<span class="dashicons dashicons-instagram"></span> ' . $title;
+        $title = preg_replace('/social\s+/i', '', $this->app->getTitle());
+        return '<span class="dashicons dashicons-share"></span> ' . $title;
     }
 }

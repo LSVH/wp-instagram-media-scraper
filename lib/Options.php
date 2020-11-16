@@ -1,12 +1,12 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\InstagramMediaScraper;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
 class Options
 {
-    const USERNAME = 'username';
-    const AMOUNT = 'amount';
-    const INTERVAL = 'interval';
+    const IG_USERNAME = 'ig_username';
+    const IG_AMOUNT = 'ig_amount';
+    const IG_INTERVAL = 'ig_interval';
     const COUNT = 'count';
     const LAST = 'last';
     const RUN = 'run';
@@ -24,9 +24,9 @@ class Options
         $domain = $this->app->getDomain();
 
         $labels = [
-            static::USERNAME => __('Instagram username', $domain),
-            static::AMOUNT => __('Scrape amount', $domain),
-            static::INTERVAL => __('Scraping interval', $domain),
+            static::IG_USERNAME => __('Username', $domain),
+            static::IG_AMOUNT => __('Scrape amount', $domain),
+            static::IG_INTERVAL => __('Scraping interval', $domain),
             static::COUNT => __('Media scraped', $domain),
             static::LAST => __('Last run', $domain),
             static::RUN => __('Check to start scraping after saving the settings.', $domain),

@@ -1,9 +1,9 @@
 <?php
 
 /**
- * Plugin Name: Instagram Media Scraper
- * Plugin URI: https://wordpress.org/plugins/instagram-media-scraper/
- * Description: Scrape Media from a specified Instagram account.
+ * Plugin Name: Social Media Scraper
+ * Plugin URI: https://wordpress.org/plugins/social-media-scraper/
+ * Description: Scrape media from a specified social media account.
  * Version: 1.0.0
  * Requires at least: 5.0
  * Requires PHP: 7.0
@@ -11,7 +11,7 @@
  * Author URI: https://lsvh.org/
  * License: GPLv2 or later
  * License URI: https://www.gnu.org/licenses/gpl-3.0.html
- * Text Domain: ig-media-scraper
+ * Text Domain: social-media-scraper
  * Domain Path: /languages
  */
 
@@ -22,7 +22,7 @@ if (!file_exists($autoloader)) {
 
 require $autoloader;
 
-use LSVH\WordPress\Plugin\InstagramMediaScraper\Bootstrap;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Bootstrap;
 
 $boot = new Bootstrap(__FILE__);
 $boot->exec();

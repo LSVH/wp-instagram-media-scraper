@@ -1,6 +1,6 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\InstagramMediaScraper;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
 use \InstagramScraper\Instagram;
 use \GuzzleHttp\Client;
@@ -47,7 +47,7 @@ class CronActions
     private function scheduleEvent()
     {
         if (!wp_next_scheduled($this->hook)) {
-            $interval = $this->options->getValue(Options::INTERVAL, 'daily');
+            $interval = $this->options->getValue(Options::IG_INTERVAL, 'daily');
 
             wp_schedule_event(time(), $interval, $this->hook);
         }
@@ -71,8 +71,8 @@ class CronActions
 
     private function getMedias()
     {
-        $username = $this->options->getValue(Options::USERNAME);
-        $amount = $this->options->getValue(Options::AMOUNT, 10);
+        $username = $this->options->getValue(Options::IG_USERNAME);
+        $amount = $this->options->getValue(Options::IG_AMOUNT, 10);
         $instagram = new Instagram(new Client());
 
         return empty($username) ? [] : $instagram->getMedias($username, $amount);

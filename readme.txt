@@ -1,6 +1,6 @@
-=== Instagram Media Scraper ===
+=== Social Media Scraper ===
 Contributors: lsvh
-Donate link: https://github.com/LSVH/wp-instagram-media-scraper
+Donate link: https://github.com/LSVH/wp-social-media-scraper
 Tags: cron, tool, social media
 Requires at least: 5.0
 Requires PHP: 7.0
@@ -9,11 +9,15 @@ Stable tag: trunk
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Scrape Media from a specified Instagram account.
+Scrape media from a specified social media account.
 
 == Description ==
 
-This plugin downloads media from a specified Instagram account and uploads it as an `attachment` to your WordPress site.
+This plugin downloads media from a specified social media account and uploads it as an `attachment` to your WordPress site.
+
+The plugin currently supports the following social media platforms:
+
+* Instagram
 
 == Installation ==
 
@@ -36,7 +40,7 @@ No, currently this plugin only supports scraping media from public accounts. In 
 
 = How to identify the scraped media =
 
-The plugin creates an user with the username 'ig-media-scraper' who is authoring all the scraped media the media is then stored as attachment.
+The plugin creates an user with the username 'social-media-scraper' who is authoring all the scraped media the media is then stored as attachment.
 
 == Screenshots ==
 
@@ -52,4 +56,4 @@ N.A.
 
 == Issues & Contributions ==
 
-Please submit issues or your contributions for this plugin on the [Github Repository](https://github.com/LSVH/wp-instagram-media-scraper).
+Please submit issues or your contributions for this plugin on the [Github Repository](https://github.com/LSVH/wp-social-media-scraper).

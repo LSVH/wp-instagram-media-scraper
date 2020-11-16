@@ -1,10 +1,10 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\InstagramMediaScraper;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
 class AdminActions
 {
-    const SECTION_CONF = 'conf';
+    const SECTION_INSTAGRAM = 'instagram';
     const SECTION_STATS = 'stats';
 
     private $app;
@@ -31,22 +31,22 @@ class AdminActions
     private function registerSettingSections()
     {
         $domain = $this->app->getDomain();
-        add_settings_section(static::SECTION_CONF, null, null, $domain);
+        add_settings_section(static::SECTION_INSTAGRAM, __('Instagram Scraper', $domain), null, $domain);
         add_settings_section(static::SECTION_STATS, __('Statistics', $domain), null, $domain);
     }
 
     private function registerSettingFields()
     {
-        $this->addInputField(static::SECTION_CONF, $this->options->getLabel(Options::USERNAME), Options::USERNAME, function ($name) {
+        $this->addInputField(static::SECTION_INSTAGRAM, $this->options->getLabel(Options::IG_USERNAME), Options::IG_USERNAME, function ($name) {
             return $this->getInputField($name, 'text', ['regular-text', 'code']);
         });
-        $this->addInputField(static::SECTION_CONF, $this->options->getLabel(Options::AMOUNT), Options::AMOUNT, function ($name) {
+        $this->addInputField(static::SECTION_INSTAGRAM, $this->options->getLabel(Options::IG_AMOUNT), Options::IG_AMOUNT, function ($name) {
             return $this->getInputField($name, 'number', ['small-text'], ['min' => 1, 'max' => 50]);
         });
-        $this->addInputField(static::SECTION_CONF, $this->options->getLabel(Options::INTERVAL), Options::INTERVAL, function ($name) {
+        $this->addInputField(static::SECTION_INSTAGRAM, $this->options->getLabel(Options::IG_INTERVAL), Options::IG_INTERVAL, function ($name) {
             return $this->getSelectField($name, $this->getIntervalOptions());
         });
-        $this->addInputField(static::SECTION_CONF, $this->options->getLabel(Options::INTERVAL), Options::INTERVAL, function ($name) {
+        $this->addInputField(static::SECTION_INSTAGRAM, $this->options->getLabel(Options::IG_INTERVAL), Options::IG_INTERVAL, function ($name) {
             return $this->getSelectField($name, $this->getIntervalOptions());
         });
         $this->addInputField(static::SECTION_STATS, $this->options->getLabel(Options::COUNT), Options::COUNT, function ($name) {
