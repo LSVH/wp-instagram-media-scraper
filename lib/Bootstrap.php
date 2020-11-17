@@ -2,9 +2,17 @@
 
 namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
+use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\ScraperInstaller;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingPageInstaller;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingDataInstaller;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingSectionInstaller;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Scrapers\InstagramScraper;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\InstagramSection;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\StatisticsSection;
+
 class Bootstrap
 {
-    private $app;
+    private $domain;
     private $options;
 
     public function __construct($file)
@@ -14,50 +22,30 @@ class Bootstrap
         }
 
         $data = get_plugin_data($file, false);
-        $name = array_key_exists('Name', $data) ? $data['Name'] : 'Default';
-        $domain = array_key_exists('TextDomain', $data) ? $data['TextDomain'] : 'default';
-        $this->app = new App($name, $domain);
-        $this->options = new Options($this->app);
+        $this->domain = array_key_exists('TextDomain', $data) ? $data['TextDomain'] : 'default';
+        $this->options = get_option(esc_sql($this->domain), []);
     }
 
     public function exec()
     {
-        $this->setupActions();
-        $this->setupSettingsPage();
-    }
+        $domain = $this->domain;
+        $options = $this->options;
+        $instagram = new InstagramSection($domain, $options);
+        $statistics = new StatisticsSection($domain, $options);
+        $sections = [$instagram, $statistics];
+        $scrapers = [new InstagramScraper($domain, $statistics, $instagram)];
 
-    private function setupActions()
-    {
-        add_action('admin_init', function () {
-            $actions = new AdminActions($this->app, $this->options);
-            $actions->init();
+        add_action('init', function () use ($domain, $scrapers) {
+            ScraperInstaller::install($domain, $scrapers);
         });
 
-        add_action('init', function () {
-            $cronActions = new CronActions($this->app, $this->options);
-            $cronActions->init();
+        add_action('admin_menu', function () use ($domain) {
+            SettingPageInstaller::install($domain, ['icon' => 'share']);
         });
-    }
 
-    private function setupSettingsPage()
-    {
-        add_action('admin_menu', function () {
-            add_options_page(
-                $this->app->getTitle(),
-                $this->getMenuTitle(),
-                'manage_options',
-                $this->app->getDomain(),
-                function () {
-                    $ui = new UserInterface($this->app, $this->options);
-                    print $ui->render();
-                }
-            );
+        add_action('admin_init', function () use ($domain, $sections) {
+            SettingDataInstaller::install($domain);
+            SettingSectionInstaller::install($domain, $sections);
         });
-    }
-
-    private function getMenuTitle()
-    {
-        $title = preg_replace('/social\s+/i', '', $this->app->getTitle());
-        return '<span class="dashicons dashicons-share"></span> ' . $title;
     }
 }
