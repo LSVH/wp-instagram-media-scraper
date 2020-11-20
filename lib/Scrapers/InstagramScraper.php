@@ -40,13 +40,13 @@ class InstagramScraper extends AbstractScraper
             ? $media->getImageHighResolutionUrl() : $media->getVideoStandardResolutionUrl();
 
         return ModelFactory::createInstance(Media::class, [
-            Media::ATTR_ID => Utilities::prefix($prefix, $media->getId()),
-            Media::ATTR_TITLE => Utilities::prefix(ucfirst($username), $media->getId(), ' '),
-            Media::ATTR_CONTENT => $media->getCaption(),
+            Media::ATTR_ID => sanitize_title(Utilities::prefix($prefix, $media->getId())),
+            Media::ATTR_TITLE => sanitize_text_field(Utilities::prefix(ucfirst($username), $media->getId(), ' ')),
+            Media::ATTR_CONTENT => wp_kses_post($media->getCaption()),
             Media::ATTR_DATE => $media->getCreatedTime(),
             Media::ATTR_AUTHOR => $this->getAuthor(),
-            Media::ATTR_SOURCE => $media->getLink(),
-            Media::ATTR_RESOURCE => $resource,
+            Media::ATTR_SOURCE => esc_url_raw($media->getLink()),
+            Media::ATTR_RESOURCE => esc_url_raw($resource),
         ]);
     }
 }
