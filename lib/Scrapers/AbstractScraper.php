@@ -41,7 +41,7 @@ abstract class AbstractScraper implements Scraper
         }
 
         $download = $this->downloadMedia($media);
-        if (is_wp_error($file)) {
+        if (is_wp_error($download)) {
             $this->addDefaultErrorMessage($media, $download);
 
             return false;
