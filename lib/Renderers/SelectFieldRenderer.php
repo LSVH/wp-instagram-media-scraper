@@ -10,7 +10,9 @@ class SelectFieldRenderer extends OptionsFieldRenderer
     {
         $attrs =  Utilities::arrayToHtmlAttributes($this->getAttributes());
 
-        return "<select$attrs>$options</select>";
+        $placeholder = '<option value="">-</option>';
+
+        return "<select$attrs>$placeholder.$options</select>";
     }
 
     protected function renderOption($label, $attrs)

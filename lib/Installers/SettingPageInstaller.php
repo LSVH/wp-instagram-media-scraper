@@ -3,7 +3,7 @@
 namespace LSVH\WordPress\Plugin\SocialMediaScraper\Installers;
 
 use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
-use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\Factory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\RendererFactory;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\IconTextRenderer;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\CheckboxFieldRenderer;
 
@@ -13,10 +13,10 @@ class SettingPageInstaller implements Installer
 
     public static $capability = 'manage_options';
 
-    public static function install($domain, $options = [])
+    public static function install($domain, $args = [])
     {
         $pageTitle = static::getPageTitle($domain);
-        $menuTitle = static::getMenuTitle($domain, $options);
+        $menuTitle = static::getMenuTitle($domain, $args);
 
         add_options_page($pageTitle, $menuTitle, static::$capability, $domain, function () use ($pageTitle, $domain) {
             $title = "<h1>$pageTitle</h1><hr />";
@@ -33,7 +33,7 @@ class SettingPageInstaller implements Installer
 
     private static function getMenuTitle($content, $attrs = [])
     {
-        $instance = Factory::createInstance(IconTextRenderer::class, $attrs);
+        $instance = RendererFactory::createInstance(IconTextRenderer::class, $attrs);
         $content = ucfirst(substr(strstr(static::getPageTitle($content), ' '), 1));
 
         return $instance->render($content);
@@ -59,7 +59,7 @@ class SettingPageInstaller implements Installer
     {
         $exec = static::FIELD_EXEC;
         $action = Utilities::prefix($domain, $exec);
-        $instance = Factory::createInstance(CheckboxFieldRenderer::class, [
+        $instance = RendererFactory::createInstance(CheckboxFieldRenderer::class, [
             'name' => Utilities::prefix($domain, $exec, '[', ']'),
             'class' => 'tagchecklist',
             'options' => [

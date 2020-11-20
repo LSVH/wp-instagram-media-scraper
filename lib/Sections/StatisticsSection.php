@@ -2,6 +2,9 @@
 
 namespace LSVH\WordPress\Plugin\SocialMediaScraper\Sections;
 
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\ModelFactory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\RendererFactory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Models\Field;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\TextRenderer;
 
 class StatisticsSection extends AbstractSection
@@ -24,27 +27,30 @@ class StatisticsSection extends AbstractSection
         $domain = $this->domain;
 
         return [
-            [
-                'id' => static::FIELD_TOTAL,
-                'label' => __('Total media scraped', $domain),
-                'renderer' => TextRenderer::class,
-                'renderer_attrs' => [
+            ModelFactory::createInstance(Field::class, [
+                Field::ATTR_ID => static::FIELD_TOTAL,
+                Field::ATTR_LABEL => __('Total media scraped', $domain),
+                Field::ATTR_RENDERER => RendererFactory::createInstance(TextRenderer::class, [
                     'escaper' => function ($value) {
-                        return is_numeric($value) ? $value : 0;
+                        return $this->getNumber($value);
                     }
-                ]
-            ],
-            [
-                'id' => static::FIELD_LAST,
-                'label' => __('Last run on', $domain),
-                'renderer' => TextRenderer::class,
-                'renderer_attrs' => [
+                ]),
+            ]),
+            ModelFactory::createInstance(Field::class, [
+                Field::ATTR_ID => static::FIELD_LAST,
+                Field::ATTR_LABEL => __('Last run on', $domain),
+                Field::ATTR_RENDERER => RendererFactory::createInstance(TextRenderer::class, [
                     'escaper' => function ($value) {
                         return $this->getTimestamp($value);
                     }
-                ]
-            ]
+                ]),
+            ]),
         ];
+    }
+
+    private function getNumber($value, $default = 0)
+    {
+        return is_numeric($value) ? $value : $default;
     }
 
     private function getTimestamp($value)

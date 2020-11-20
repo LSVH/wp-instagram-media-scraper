@@ -18,36 +18,38 @@ abstract class AbstractScraper implements Scraper
         $this->settings = $settings;
     }
 
-    protected function createAttachments($items)
+    protected function storeMedias($medias)
     {
+        $current = 0;
         $total = $this->statistics->getValue(StatisticsSection::FIELD_TOTAL, 0);
 
-        foreach ($items as $item) {
-            if ($this->createAttachment($item)) {
+        foreach ($medias as $media) {
+            if ($this->storeMedia($media)) {
+                $current += 1;
                 $total += 1;
             }
         }
-
-        $this->statistics->setValue(StatisticsSection::FIELD_TOTAL, $total);
-        $this->statistics->setValue(StatisticsSection::FIELD_LAST, time());
+        $this->addDefaultInfoMessage($current);
+        $this->statistics->setValue(StatisticsSection::FIELD_TOTAL, intval($total));
+        $this->statistics->setValue(StatisticsSection::FIELD_LAST, intval(time()));
     }
 
-    protected function createAttachment($item)
+    protected function storeMedia($media)
     {
-        if ($this->isMediaUploaded($item->getSlug())) {
+        if ($this->isMediaUploaded($media->getId())) {
             return false;
         }
 
-        $media = $this->downloadMedia($item);
-        if (is_wp_error($media)) {
-            $this->addDefaultErrorMessage($media, $item);
+        $download = $this->downloadMedia($media);
+        if (is_wp_error($file)) {
+            $this->addDefaultErrorMessage($media, $download);
 
             return false;
         }
 
-        $attachment = $this->uploadMedia($item, $media);
-        if (is_wp_error($attachment)) {
-            $this->addDefaultErrorMessage($attachment, $item);
+        $upload = $this->uploadMedia($media, $download);
+        if (is_wp_error($upload)) {
+            $this->addDefaultErrorMessage($media, $upload);
 
             return false;
         }
@@ -84,16 +86,16 @@ abstract class AbstractScraper implements Scraper
         return null;
     }
 
-    public function downloadMedia($item)
+    public function downloadMedia($media)
     {
         if (!function_exists('download_url')) {
             require_once ABSPATH . 'wp-admin/includes/file.php';
         }
 
-        $url = $item->getResource();
+        $url = $media->getResource();
         $basename = basename(strtok($url, '?'));
         $ext = pathinfo($basename, PATHINFO_EXTENSION);
-        $name = $item->getSlug() . '.' . $ext;
+        $name = $media->getId() . '.' . $ext;
         $download = download_url($url);
 
         return is_string($download) ? [
@@ -102,37 +104,47 @@ abstract class AbstractScraper implements Scraper
         ] : $download;
     }
 
-    public function uploadMedia($item, $media)
+    public function uploadMedia($media, $download)
     {
         if (!function_exists('media_handle_sideload')) {
             require_once ABSPATH . 'wp-admin/includes/image.php';
             require_once ABSPATH . 'wp-admin/includes/media.php';
         }
 
-        $source = $item->getSource();
+        $source = $media->getSource();
         $source = '<a href="' . $source . '" target="_blank">' . $source . '</a>';
         $source = sprintf(__('Source: %s', $this->domain), $source);
         $source = '<p class="source-reference">' . $source . '</p>';
 
         $attachment = [
-            'post_name' => $item->getSlug(),
-            'post_date' => $item->getDate(),
-            'post_title' => $item->getTitle(),
-            'post_content' => $item->getContent() . $source,
+            'post_name' => $media->getId(),
+            'post_date' => $media->getDate(),
+            'post_title' => $media->getTitle(),
+            'post_content' => $media->getContent() . $source,
             'post_author' => $this->getAuthor(),
         ];
 
-        return media_handle_sideload($media, 0, null, $attachment);
+        return media_handle_sideload($download, 0, null, $attachment);
     }
 
-    private function addDefaultErrorMessage($error, $item)
+    private function addDefaultErrorMessage($media, $error)
     {
         $domain = $this->domain;
         $id = $this->getId();
-        $link = sprintf('<a href="%s" target="_blank">%s</a>', $item->getSource(), __('this item', $domain));
+        $link = sprintf('<a href="%s" target="_blank">%s</a>', $media->getSource(), __('this item', $domain));
         $code = $error->get_error_code();
         $errmsg = $error->get_error_message($code);
         $message = sprintf(__('While downloading %s with the `%s`, the following error occurred: %s', $domain), $link, $id, $errmsg);
         add_settings_error($domain, $code, $message);
+    }
+
+    private function addDefaultInfoMessage($count)
+    {
+        $domain = $this->domain;
+        $id = $this->getId();
+        $date = date('Y-m-d H:i:s', time());
+        $count = sprintf(_n('%s item', '%s items', $count, $domain), $count);
+        $message = sprintf(__('Ran the `%s` on `%s` and retrieved %s', $domain), $id, $date, $count);
+        add_settings_error($domain, 'info', $message, 'info');
     }
 }

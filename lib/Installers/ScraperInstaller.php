@@ -6,13 +6,13 @@ use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
 
 class ScraperInstaller implements Installer
 {
-    public static function install($domain, $options = [])
+    public static function install($domain, $args = [])
     {
-        foreach ($options as $scraper) {
+        foreach ($args as $scraper) {
             $hook = Utilities::prefix($domain, $scraper->getId());
             static::registerActionHook($hook, $scraper);
             static::registerScheduledEvent($hook, $scraper);
-            static::registerOptionSavedEvent($domain, $hook);
+            static::registerOptionSavedEvent($hook, $domain);
         }
     }
 
@@ -30,14 +30,15 @@ class ScraperInstaller implements Installer
         }
     }
 
-    private static function registerOptionSavedEvent($domain, $hook)
+    private static function registerOptionSavedEvent($hook, $domain)
     {
-        $callback = function () use ($domain, $hook) {
-            $action = SettingPageInstaller::FIELD_EXEC;
+        $callback = function () use ($hook, $domain) {
+            $exec = SettingPageInstaller::FIELD_EXEC;
+            $action = Utilities::prefix($domain, $exec);
             $settings = Utilities::getArrayValueByKey($_POST, $domain, []);
-            $value = Utilities::getArrayValueByKey($settings, $action, null);
-            if (!empty($value)) {
-                unset($_POST[$domain][$action]);
+            $nonce = Utilities::getArrayValueByKey($settings, $exec, null);
+            if (wp_verify_nonce($nonce, $action)) {
+                unset($_POST[$domain][$exec]);
                 do_action($hook);
             }
         };

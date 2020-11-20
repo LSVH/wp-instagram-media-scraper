@@ -4,9 +4,9 @@ namespace LSVH\WordPress\Plugin\SocialMediaScraper\Installers;
 
 class SettingDataInstaller implements Installer
 {
-    public static function install($domain, $options = [])
+    public static function install($domain, $args = [])
     {
-        register_setting($domain, $domain, array_merge($options, [
+        register_setting($domain, $domain, array_merge($args, [
             'type' => 'array',
             'sanitize_callback' => function ($value) use ($domain) {
                 /** 

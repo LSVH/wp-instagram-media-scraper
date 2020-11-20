@@ -2,8 +2,10 @@
 
 namespace LSVH\WordPress\Plugin\SocialMediaScraper\Scrapers;
 
-use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\InstagramSection;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Models\Media;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\ModelFactory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\InstagramSection;
 
 class InstagramScraper extends AbstractScraper
 {
@@ -27,7 +29,7 @@ class InstagramScraper extends AbstractScraper
             return $this->extractItemFromMedia($media);
         }, empty($username) ? [] : $scraper->getMedias($username, $amount));
 
-        $this->createAttachments($items);
+        $this->storeMedias($items);
     }
 
     private function extractItemFromMedia($media)
@@ -37,14 +39,14 @@ class InstagramScraper extends AbstractScraper
         $resource = $media->getType() !== 'video'
             ? $media->getImageHighResolutionUrl() : $media->getVideoStandardResolutionUrl();
 
-        return new ScraperItem([
-            'slug' => Utilities::prefix($prefix, $media->getId()),
-            'title' => Utilities::prefix(ucfirst($username), $media->getId(), ' '),
-            'content' => $media->getCaption(),
-            'date' => $media->getCreatedTime(),
-            'author' => $this->getAuthor(),
-            'source' => $media->getLink(),
-            'resource' => $resource,
+        return ModelFactory::createInstance(Media::class, [
+            Media::ATTR_ID => Utilities::prefix($prefix, $media->getId()),
+            Media::ATTR_TITLE => Utilities::prefix(ucfirst($username), $media->getId(), ' '),
+            Media::ATTR_CONTENT => $media->getCaption(),
+            Media::ATTR_DATE => $media->getCreatedTime(),
+            Media::ATTR_AUTHOR => $this->getAuthor(),
+            Media::ATTR_SOURCE => $media->getLink(),
+            Media::ATTR_RESOURCE => $resource,
         ]);
     }
 }

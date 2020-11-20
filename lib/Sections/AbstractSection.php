@@ -3,7 +3,7 @@
 namespace LSVH\WordPress\Plugin\SocialMediaScraper\Sections;
 
 use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
-use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\Factory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\RendererFactory;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Renderers\IconTextRenderer;
 
 abstract class AbstractSection implements Section
@@ -29,7 +29,7 @@ abstract class AbstractSection implements Section
 
     public static function getTitle()
     {
-        $renderer = Factory::createInstance(IconTextRenderer::class, [
+        $renderer = RendererFactory::createInstance(IconTextRenderer::class, [
             'icon' => static::getIconName(),
         ]);
 
@@ -46,5 +46,6 @@ abstract class AbstractSection implements Section
     public function setValue($name, $value)
     {
         $this->options[static::getId()][$name] = $value;
+        update_option($this->domain, $this->options);
     }
 }

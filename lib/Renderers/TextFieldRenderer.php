@@ -7,7 +7,7 @@ class TextFieldRenderer extends FieldRenderer
     protected function getAttributes()
     {
         return array_merge(parent::getAttributes(), [
-            'type' => 'text',
+            static::ATTR_TYPE => 'text',
         ]);
     }
 

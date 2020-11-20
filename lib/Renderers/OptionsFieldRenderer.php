@@ -4,8 +4,10 @@ namespace LSVH\WordPress\Plugin\SocialMediaScraper\Renderers;
 
 use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
 
-abstract class OptionsFieldRenderer extends FieldRenderer
+class OptionsFieldRenderer extends FieldRenderer
 {
+    const ATTR_OPTIONS = 'options';
+
     protected $options;
 
     public function __construct($attrs = [])
@@ -14,7 +16,7 @@ abstract class OptionsFieldRenderer extends FieldRenderer
 
         $attrs = is_array($attrs) ? $attrs : [];
 
-        $this->options = Utilities::getArrayValueByKey($attrs, 'options', []);
+        $this->options = Utilities::getArrayValueByKey($attrs, static::ATTR_OPTIONS, []);
     }
 
     public function render($value)
@@ -24,7 +26,10 @@ abstract class OptionsFieldRenderer extends FieldRenderer
         return $this->renderWrapper($options);
     }
 
-    protected abstract function renderWrapper($options);
+    protected function renderWrapper($options)
+    {
+        return "<ul>$options</ul>";
+    }
 
     protected function renderOptions($current)
     {
@@ -35,9 +40,20 @@ abstract class OptionsFieldRenderer extends FieldRenderer
         }, array_keys($this->options), $this->options));
     }
 
-    protected abstract function getOptionAttributes($value, $current);
+    protected function getOptionAttributes($value, $current)
+    {
+        $active = $value === $current ? 'active' : null;
 
-    protected abstract function renderOption($label, $attrs);
+        return [
+            'value' => $value,
+            'class' => $active
+        ];
+    }
+
+    protected function renderOption($label, $attrs)
+    {
+        return "<li$attrs>$label</li>";
+    }
 
     protected function escape($value)
     {

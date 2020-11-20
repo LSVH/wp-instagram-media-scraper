@@ -1,12 +1,18 @@
 <?php
 
-namespace LSVH\WordPress\Plugin\SocialMediaScraper\Scrapers;
+namespace LSVH\WordPress\Plugin\SocialMediaScraper\Models;
 
 use LSVH\WordPress\Plugin\SocialMediaScraper\Utilities;
 
-class ScraperItem
+class Media extends AbstractModel
 {
-    private $slug;
+    const ATTR_TITLE = 'title';
+    const ATTR_CONTENT = 'content';
+    const ATTR_DATE = 'date';
+    const ATTR_AUTHOR = 'author';
+    const ATTR_SOURCE = 'source';
+    const ATTR_RESOURCE = 'resource';
+
     private $title;
     private $content;
     private $date;
@@ -16,18 +22,14 @@ class ScraperItem
 
     public function __construct($attrs = [])
     {
-        $this->slug = Utilities::getArrayValueByKey($attrs, 'slug');
-        $this->title = Utilities::getArrayValueByKey($attrs, 'title');
-        $this->content = Utilities::getArrayValueByKey($attrs, 'content');
-        $this->date = Utilities::getArrayValueByKey($attrs, 'date');
-        $this->author = Utilities::getArrayValueByKey($attrs, 'author');
-        $this->source = Utilities::getArrayValueByKey($attrs, 'source');
-        $this->resource = Utilities::getArrayValueByKey($attrs, 'resource');
-    }
+        parent::__construct($attrs);
 
-    public function getSlug()
-    {
-        return $this->slug;
+        $this->title = Utilities::getArrayValueByKey($attrs, static::ATTR_TITLE);
+        $this->content = Utilities::getArrayValueByKey($attrs, static::ATTR_CONTENT);
+        $this->date = Utilities::getArrayValueByKey($attrs, static::ATTR_DATE);
+        $this->author = Utilities::getArrayValueByKey($attrs, static::ATTR_AUTHOR);
+        $this->source = Utilities::getArrayValueByKey($attrs, static::ATTR_SOURCE);
+        $this->resource = Utilities::getArrayValueByKey($attrs, static::ATTR_RESOURCE);
     }
 
     public function getTitle()

@@ -2,18 +2,22 @@
 
 namespace LSVH\WordPress\Plugin\SocialMediaScraper;
 
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\SectionFactory;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Factories\ScraperFactory;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\ScraperInstaller;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingPageInstaller;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingDataInstaller;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingSectionInstaller;
-use LSVH\WordPress\Plugin\SocialMediaScraper\Scrapers\InstagramScraper;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Installers\SettingValidatorInstaller;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\InstagramSection;
 use LSVH\WordPress\Plugin\SocialMediaScraper\Sections\StatisticsSection;
+use LSVH\WordPress\Plugin\SocialMediaScraper\Scrapers\InstagramScraper;
 
 class Bootstrap
 {
     private $domain;
     private $options;
+    private $stats;
 
     public function __construct($file)
     {
@@ -28,13 +32,16 @@ class Bootstrap
 
     public function exec()
     {
-        $domain = $this->domain;
-        $options = $this->options;
-        $instagram = new InstagramSection($domain, $options);
-        $statistics = new StatisticsSection($domain, $options);
-        $sections = [$instagram, $statistics];
-        $scrapers = [new InstagramScraper($domain, $statistics, $instagram)];
+        $sectionArgs = $this->getSectionArgs();
+        $instagram = SectionFactory::createInstance(InstagramSection::class, $sectionArgs);
+        $this->stats = SectionFactory::createInstance(StatisticsSection::class, $sectionArgs);
+        $sections = [$instagram, $this->stats];
 
+        $scrapers = [
+            ScraperFactory::createInstance(InstagramScraper::class, $this->getScraperArgs($instagram))
+        ];
+
+        $domain = $this->domain;
         add_action('init', function () use ($domain, $scrapers) {
             ScraperInstaller::install($domain, $scrapers);
         });
@@ -46,6 +53,24 @@ class Bootstrap
         add_action('admin_init', function () use ($domain, $sections) {
             SettingDataInstaller::install($domain);
             SettingSectionInstaller::install($domain, $sections);
+            SettingValidatorInstaller::install($domain, $sections);
         });
+    }
+
+    private function getSectionArgs()
+    {
+        return [
+            SectionFactory::ATTR_DOMAIN => $this->domain,
+            SectionFactory::ATTR_ARGS => $this->options,
+        ];
+    }
+
+    private function getScraperArgs($data)
+    {
+        return [
+            ScraperFactory::ATTR_DOMAIN => $this->domain,
+            ScraperFactory::ATTR_STATS => $this->stats,
+            ScraperFactory::ATTR_DATA => $data,
+        ];
     }
 }
