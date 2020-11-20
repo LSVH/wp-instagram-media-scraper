@@ -17,7 +17,7 @@ This plugin downloads media from a specified social media account and uploads it
 
 The plugin currently supports the following social media platforms:
 
-* Instagram
+* Instagram (thanks to [raiym's `instagram-php-scraper`](https://packagist.org/packages/raiym/instagram-php-scraper))
 
 == Installation ==
 
